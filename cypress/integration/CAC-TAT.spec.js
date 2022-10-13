@@ -378,6 +378,9 @@ describe("Central de Atendimento ao Cliente TAT", function () {
       expect(res.statusText).to.equal("OK");
       expect(res.body).include("CAC TAT");
     });
-    // cy.request("GET", "https://cac-tat.s3.eu-central-1.amazonaws.com/index.html")
+  });
+
+  it("show cat", () => {
+    cy.get("#cat").invoke("show").should("be.visible");
   });
 });
