@@ -245,90 +245,139 @@ describe("Central de Atendimento ao Cliente TAT", function () {
     cy.get(".privacy").should("be.visible");
   });
 
-  it.only("preenche os campos obrigatórios e envia o formulário com clock", () => {
+  it("preenche os campos obrigatórios e envia o formulário com clock", () => {
     cy.clock();
 
-    cy.get("#firstName")
-      .should("be.visible")
-      .type("Guilherme")
-      .should("have.value", "Guilherme");
+    Cypress._.times(5, () => {
+      cy.get("#firstName").clear();
 
-    cy.get("#lastName")
-      .should("be.visible")
-      .type("Lima")
-      .should("have.value", "Lima");
+      cy.get("#firstName")
+        .should("be.visible")
+        .type("Guilherme")
+        .should("have.value", "Guilherme");
 
-    cy.get("#email")
-      .should("be.visible")
-      .type("guibiel-10@hotmail.com")
-      .should("have.value", "guibiel-10@hotmail.com");
+      cy.get("#lastName").clear();
 
-    cy.get("#phone-checkbox").check();
+      cy.get("#lastName")
+        .should("be.visible")
+        .type("Lima")
+        .should("have.value", "Lima");
 
-    cy.get("#phone")
-      .should("be.visible")
-      .type("11994306108")
-      .should("have.length", 1);
+      cy.get("#email").clear();
 
-    cy.get("#open-text-area")
-      .should("be.visible")
-      .type(
+      cy.get("#email")
+        .should("be.visible")
+        .type("guibiel-10@hotmail.com")
+        .should("have.value", "guibiel-10@hotmail.com");
+
+      cy.get("#phone-checkbox").check();
+
+      cy.get("#phone").clear();
+
+      cy.get("#phone")
+        .should("be.visible")
+        .type("11994306108")
+        .should("have.length", 1);
+
+      cy.get("#open-text-area").clear();
+
+      const longText = Cypress._.repeat(
         "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-        {
-          delay: 0,
-        }
-      )
-      .should(
-        "have.value",
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
+        2
       );
 
-    cy.contains(".button", "Enviar").should("be.visible").click();
+      cy.get("#open-text-area")
+        .should("be.visible")
+        .invoke("val", longText)
+        .should("have.value", longText);
 
-    cy.get(".success").should("be.visible");
+      cy.contains(".button", "Enviar").should("be.visible").click();
 
-    cy.tick(3000);
+      cy.get(".success").should("be.visible");
 
-    cy.get(".success").should("not.be.visible");
+      cy.tick(3000);
 
-    cy.get("#firstName")
+      cy.get(".success").should("not.be.visible");
+
+      cy.get("#firstName").clear();
+
+      cy.get("#firstName")
+        .should("be.visible")
+        .type("Guilherme")
+        .should("have.value", "Guilherme");
+
+      cy.get("#lastName").clear();
+
+      cy.get("#lastName")
+        .should("be.visible")
+        .type("Lima")
+        .should("have.value", "Lima");
+
+      cy.get("#email").clear();
+
+      cy.get("#email")
+        .should("be.visible")
+        .type("guibiel-10@hotmail.com")
+        .should("have.value", "guibiel-10@hotmail.com");
+
+      cy.get("#phone-checkbox").check();
+
+      cy.get("#phone").clear();
+
+      cy.get("#phone").should("be.visible").type("aaaa");
+
+      cy.get("#open-text-area").clear();
+
+      cy.get("#open-text-area")
+        .should("be.visible")
+        .type(
+          "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+          {
+            delay: 0,
+          }
+        )
+        .should(
+          "have.value",
+          "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
+        );
+
+      cy.contains(".button", "Enviar").should("be.visible").click();
+
+      cy.get(".error").should("be.visible");
+
+      cy.tick(3000);
+
+      cy.get(".error").should("not.be.visible");
+    });
+  });
+
+  it("exibe a mensagem de erro e sucesso utilizando evoke", () => {
+    cy.get(".success")
+      .should("not.be.visible")
+      .invoke("show")
       .should("be.visible")
-      .type("Guilherme")
-      .should("have.value", "Guilherme");
+      .and("contain", "Mensagem enviada com sucesso.")
+      .invoke("hide")
+      .should("not.be.visible");
 
-    cy.get("#lastName")
+    cy.get(".error")
+      .should("not.be.visible")
+      .invoke("show")
       .should("be.visible")
-      .type("Lima")
-      .should("have.value", "Lima");
+      .and("contain", "Valide os campos obrigatórios!")
+      .invoke("hide")
+      .should("not.be.visible");
+  });
 
-    cy.get("#email")
-      .should("be.visible")
-      .type("guibiel-10@hotmail.com")
-      .should("have.value", "guibiel-10@hotmail.com");
-
-    cy.get("#phone-checkbox").check();
-
-    cy.get("#phone").should("be.visible").type("aaaa");
-
-    cy.get("#open-text-area")
-      .should("be.visible")
-      .type(
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-        {
-          delay: 0,
-        }
-      )
-      .should(
-        "have.value",
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
-      );
-
-    cy.contains(".button", "Enviar").should("be.visible").click();
-
-    cy.get(".error").should("be.visible");
-
-    cy.tick(3000);
-
-    cy.get(".error").should("not.be.visible");
+  it.only("faz uma requisição HTTP", () => {
+    cy.request({
+      method: "GET",
+      url: "https://cac-tat.s3.eu-central-1.amazonaws.com/index.html",
+    }).then((res) => {
+      expect(res.status).to.equal(200);
+      expect(res.statusText).to.equal("OK");
+      expect(res.body).include("CAC TAT");
+    });
+    // cy.request("GET", "https://cac-tat.s3.eu-central-1.amazonaws.com/index.html")
   });
 });
